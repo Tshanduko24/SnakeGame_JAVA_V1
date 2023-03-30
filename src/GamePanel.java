@@ -13,7 +13,9 @@ public class GamePanel extends JPanel implements ActionListener {
     static final int DELAY = 75;
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
-     int bodyParts = 6;
+
+    Image backgroundImage;
+     int bodyParts = 4;
      int applesEaten;
      int appleX;
      int appleY;
@@ -25,6 +27,7 @@ public class GamePanel extends JPanel implements ActionListener {
          random = new Random();
          this.setPreferredSize(new Dimension(SCREEN_WIDTH,SCREEN_HEIGHT));
          this.setBackground(Color.BLACK);
+         backgroundImage =  new ImageIcon("31393.jpg").getImage();
          this.setFocusable(true);
          this.addKeyListener(new MyKeyAdapter());
          startGame();
@@ -42,35 +45,41 @@ public class GamePanel extends JPanel implements ActionListener {
     public void paintComponent(Graphics g)
     {
        super.paintComponent(g);
+
+        Graphics2D g2D = (Graphics2D) g;
+        g2D.drawImage(backgroundImage,0,0,null);
+        draw(g2D);
        draw(g);
     }
 
     public void draw(Graphics g) {
         if (running) {
-            for (int i = 0; i < SCREEN_HEIGHT / UNIT_SIZE; i++) {
-                g.drawLine(i * UNIT_SIZE, 0, i * UNIT_SIZE, SCREEN_HEIGHT);
-                g.drawLine(0, i * UNIT_SIZE, SCREEN_WIDTH, i * UNIT_SIZE);
-            }
-            g.setColor(Color.red);
+//            for (int i = 0; i < SCREEN_HEIGHT / UNIT_SIZE; i++) {
+//                g.drawLine(i * UNIT_SIZE, 0, i * UNIT_SIZE, SCREEN_HEIGHT);
+//                g.drawLine(0, i * UNIT_SIZE, SCREEN_WIDTH, i * UNIT_SIZE);
+//            }
+            g.setColor(Color.blue);
             g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
 
             for (int i = 0; i < bodyParts; i++) {
                 if (i == 0) {
-                    g.setColor(Color.green);
+                    g.setColor(Color.blue);
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
                 } else {
-                    g.setColor(new Color(45, 188, 0));
+                    g.setColor(new Color(66, 112, 196));
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
                 }
             }
+            liveScore(g);
         }
         else {
             gameOver(g);
         }
     }
+
     public void newApple(){
-        appleX = random.nextInt((int)(SCREEN_WIDTH/UNIT_SIZE)*UNIT_SIZE);
-        appleY = random.nextInt((int)(SCREEN_HEIGHT/UNIT_SIZE)*UNIT_SIZE);
+        appleX = random.nextInt((int)(SCREEN_WIDTH/UNIT_SIZE))*UNIT_SIZE;
+        appleY = random.nextInt((int)(SCREEN_HEIGHT/UNIT_SIZE))*UNIT_SIZE;
     }
 
     public void move()
@@ -133,6 +142,8 @@ public class GamePanel extends JPanel implements ActionListener {
             {
                 timer.stop();
             }
+
+
         }
     }
 
@@ -141,6 +152,15 @@ public class GamePanel extends JPanel implements ActionListener {
     g.setFont(new Font("Ink Free",Font.BOLD,75));
     FontMetrics metrics = getFontMetrics(g.getFont());
     g.drawString("Game Over",(SCREEN_WIDTH - metrics.stringWidth("Game Over"))/2,SCREEN_HEIGHT / 2);
+
+    }
+
+    public void liveScore(Graphics g){
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Ink Free",Font.BOLD,15));
+        FontMetrics metrics = getFontMetrics(g.getFont());
+
+        g.drawString("Score: " + applesEaten,(SCREEN_WIDTH - metrics.stringWidth("Score: " + applesEaten))/2,20);
     }
 
     public class MyKeyAdapter extends KeyAdapter{
